@@ -1,0 +1,120 @@
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #f8f9fa;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 35px;
+}
+
+.header p {
+    margin: 5px 0 15px;
+    font-size: 25px;
+}
+
+.header-icon {
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+}
+
+.header-icon:hover {
+    transform: scale(1.05);
+}
+
+
+h1 {
+    font-size: 32px;
+    margin: 0;
+}
+
+p {
+    font-size: 18px;
+    margin-top: 10px;
+    opacity: 0.8;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.booked { background-color: lightcoral; }
+.available { background-color: lightgreen; }
+.expired { background-color: lightgray; }
+.waiting { background-color: lightyellow; }
+
+button {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.book-btn {
+    background-color: blue;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: red;
+    color: white;
+}
+
+.disabled-btn {
+    background-color: gray;
+    color: white;
+    cursor: not-allowed;
+}
+
+.footer {
+    background: linear-gradient(to right, #1e3c72, #2a5298); /* ไล่สีพื้นหลัง */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    border-radius: 10px 10px 0 0;
+    margin-top: 40px;
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.footer-content p {
+    margin: 5px 0;
+    font-weight: 300;
+}
+
+.footer a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.dev-names {
+    font-weight: 500;
+    color: #ffcc00; /* เน้นชื่อผู้พัฒนา */
+}
