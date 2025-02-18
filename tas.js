@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function getFormattedDate(offset = 0) {
         let date = new Date();
         date.setDate(date.getDate() + offset);
-        return date.toISOString().split("T")[0]; // YYYY-MM-DD
+        return date.toISOString().split("T")[0];
     }
 
     function isStudentAlreadyBooked(studentId) {
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    function updateSchedule() {
+    function updateSchedule(selectedDate) {
         let scheduleTable = document.getElementById("schedule");
         if (!scheduleTable) {
             console.error("ไม่พบ <tbody id='schedule'> ใน HTML");
@@ -27,101 +27,105 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         scheduleTable.innerHTML = "";
+        let currentDate = selectedDate;
+        let availableCount = 0;
 
-        // แสดง 7 วันถัดไป
-        for (let offset = 0; offset < 7; offset++) {
-            let currentDate = getFormattedDate(offset);
-            let availableCount = 0;
+        let dateHeader = document.createElement("tr");
+        let dateCell = document.createElement("td");
+        dateCell.colSpan = 4;
+        dateCell.textContent = `📅 วันที่: ${currentDate}`;
+        dateCell.className = "date-header";
+        dateHeader.appendChild(dateCell);
+        scheduleTable.appendChild(dateHeader);
 
-            // เพิ่มหัวข้อวันที่
-            let dateHeader = document.createElement("tr");
+        times.forEach(time => {
+            let row = document.createElement("tr");
+
             let dateCell = document.createElement("td");
-            dateCell.colSpan = 4;
-            dateCell.textContent = `📅 วันที่: ${currentDate}`;
-            dateCell.className = "date-header";
-            dateHeader.appendChild(dateCell);
-            scheduleTable.appendChild(dateHeader);
+            dateCell.textContent = currentDate;
+            row.appendChild(dateCell);
 
-            times.forEach(time => {
-                let row = document.createElement("tr");
+            let timeCell = document.createElement("td");
+            timeCell.textContent = time;
+            row.appendChild(timeCell);
 
-                let dateCell = document.createElement("td");
-                dateCell.textContent = currentDate;
-                row.appendChild(dateCell);
+            let statusCell = document.createElement("td");
+            let actionCell = document.createElement("td");
 
-                let timeCell = document.createElement("td");
-                timeCell.textContent = time;
-                row.appendChild(timeCell);
-
-                let statusCell = document.createElement("td");
-                let actionCell = document.createElement("td");
-
-                if (bookings[currentDate] && bookings[currentDate][time]) {
-                    let booking = bookings[currentDate][time];
-                    statusCell.textContent = `❌ ถูกจองโดย ${booking.name}`;
-                    statusCell.className = "booked";
-                    
-                    let cancelButton = document.createElement("button");
-                    cancelButton.textContent = "ยกเลิกจอง";
-                    cancelButton.className = "cancel-btn";
-                    cancelButton.onclick = function () {
-                        let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษาเพื่อยกเลิกจอง:");
-                        if (studentId === booking.studentId) {
-                            delete bookings[currentDate][time];
-                            if (Object.keys(bookings[currentDate]).length === 0) {
-                                delete bookings[currentDate];
-                            }
-                            localStorage.setItem("bookings", JSON.stringify(bookings));
-                            updateSchedule();
-                        } else {
-                            alert("❌ เลขประจำตัวนักศึกษาไม่ถูกต้อง!");
+            if (bookings[currentDate] && bookings[currentDate][time]) {
+                let booking = bookings[currentDate][time];
+                statusCell.textContent = `❌ ถูกจองโดย ${booking.name}`;
+                statusCell.className = "booked";
+                
+                let cancelButton = document.createElement("button");
+                cancelButton.textContent = "ยกเลิกจอง";
+                cancelButton.className = "cancel-btn";
+                cancelButton.onclick = function () {
+                    let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษาเพื่อยกเลิกจอง:");
+                    if (studentId === booking.studentId) {
+                        delete bookings[currentDate][time];
+                        if (Object.keys(bookings[currentDate]).length === 0) {
+                            delete bookings[currentDate];
                         }
-                    };
-                    actionCell.appendChild(cancelButton);
-                } else {
-                    statusCell.textContent = "✅ ว่าง";
-                    statusCell.className = "available";
-                    availableCount++;
+                        localStorage.setItem("bookings", JSON.stringify(bookings));
+                        updateSchedule(selectedDate);
+                    } else {
+                        alert("❌ เลขประจำตัวนักศึกษาไม่ถูกต้อง!");
+                    }
+                };
+                actionCell.appendChild(cancelButton);
+            } else {
+                statusCell.textContent = "✅ ว่าง";
+                statusCell.className = "available";
+                availableCount++;
 
-                    let bookButton = document.createElement("button");
-                    bookButton.textContent = "จอง";
-                    bookButton.className = "book-btn";
-                    bookButton.onclick = function () {
-                        let userName = prompt("กรุณากรอกชื่อของคุณ:");
-                        let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษา:");
-                        if (userName && studentId) {
-                            if (isStudentAlreadyBooked(studentId)) {
-                                alert("❌ คุณสามารถจองได้เพียง 1 รอบเท่านั้น!");
-                                return;
-                            }
-                            if (!bookings[currentDate]) bookings[currentDate] = {};
-                            bookings[currentDate][time] = {
-                                name: userName,
-                                studentId: studentId
-                            };
-                            localStorage.setItem("bookings", JSON.stringify(bookings));
-                            updateSchedule();
+                let bookButton = document.createElement("button");
+                bookButton.textContent = "จอง";
+                bookButton.className = "book-btn";
+                bookButton.onclick = function () {
+                    let userName = prompt("กรุณากรอกชื่อของคุณ:");
+                    let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษา:");
+                    if (userName && studentId) {
+                        if (isStudentAlreadyBooked(studentId)) {
+                            alert("❌ คุณสามารถจองได้เพียง 1 รอบเท่านั้น!");
+                            return;
                         }
-                    };
-                    actionCell.appendChild(bookButton);
-                }
+                        if (!bookings[currentDate]) bookings[currentDate] = {};
+                        bookings[currentDate][time] = {
+                            name: userName,
+                            studentId: studentId
+                        };
+                        localStorage.setItem("bookings", JSON.stringify(bookings));
+                        updateSchedule(selectedDate);
+                    }
+                };
+                actionCell.appendChild(bookButton);
+            }
 
-                row.appendChild(statusCell);
-                row.appendChild(actionCell);
-                scheduleTable.appendChild(row);
-            });
+            row.appendChild(statusCell);
+            row.appendChild(actionCell);
+            scheduleTable.appendChild(row);
+        });
 
-            // เพิ่มแถวแสดงจำนวนช่องว่างทั้งหมดของวันนั้น
-            let availableRow = document.createElement("tr");
-            let availableCell = document.createElement("td");
-            availableCell.colSpan = 4;
-            availableCell.textContent = `🟢 สถานะว่างทั้งหมด: ${availableCount} ช่วงเวลา`;
-            availableCell.className = "available-summary";
-            availableRow.appendChild(availableCell);
-            scheduleTable.appendChild(availableRow);
-        }
+        let availableRow = document.createElement("tr");
+        let availableCell = document.createElement("td");
+        availableCell.colSpan = 4;
+        availableCell.textContent = `🟢 สถานะว่างทั้งหมด: ${availableCount} ช่วงเวลา`;
+        availableCell.className = "available-summary";
+        availableRow.appendChild(availableCell);
+        scheduleTable.appendChild(availableRow);
     }
 
-    updateSchedule();
+    let datePicker = document.getElementById("date-picker");
+    if (datePicker) {
+        datePicker.min = getFormattedDate(0);
+        datePicker.max = getFormattedDate(365);
+        datePicker.value = getFormattedDate(0);
+        datePicker.addEventListener("change", function () {
+            updateSchedule(datePicker.value);
+        });
+        updateSchedule(datePicker.value);
+    } else {
+        console.error("ไม่พบ <input id='date-picker'> ใน HTML");
+    }
 });
-
