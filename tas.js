@@ -34,10 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         scheduleTable.innerHTML = "";
-        let currentTime = new Date().getTime();
 
         [0, 1].forEach(offset => {
             let currentDate = getFormattedDate(offset);
+            let availableCount = 0; // ตัวนับช่องที่ว่าง
+
             let dateHeader = document.createElement("tr");
             let dateCell = document.createElement("td");
             dateCell.colSpan = 4;
@@ -87,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     statusCell.textContent = "✅ ว่าง";
                     statusCell.className = "available";
+                    availableCount++; // เพิ่มตัวนับช่องที่ว่าง
 
                     let bookButton = document.createElement("button");
                     bookButton.textContent = "จอง";
@@ -115,6 +117,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.appendChild(actionCell);
                 scheduleTable.appendChild(row);
             });
+
+            // แสดงจำนวนเวลาที่ว่างทั้งหมดของวันนั้น
+            let availableRow = document.createElement("tr");
+            let availableCell = document.createElement("td");
+            availableCell.colSpan = 4;
+            availableCell.textContent = `🟢 สถานะว่างทั้งหมด: ${availableCount} ช่วงเวลา`;
+            availableCell.className = "available-summary";
+            availableRow.appendChild(availableCell);
+            scheduleTable.appendChild(availableRow);
         });
     }
 
