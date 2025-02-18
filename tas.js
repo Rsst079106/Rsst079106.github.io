@@ -48,14 +48,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 statusCell.textContent = "❌ ถูกจองโดย " + bookings[time].name;
                 statusCell.className = "booked";
             } else if (currentTime < canBookFrom) {
-                statusCell.textContent = "✅ ว่าง";
-                statusCell.className = "expired";
+                statusCell.textContent = "⏳ รอเปิดให้จอง";
+                statusCell.className = "waiting";
             } else if (currentTime >= timeSlotStart) {
-                statusCell.textContent = "✅ ว่าง";
+                statusCell.textContent = "⏰ หมดเวลา";
                 statusCell.className = "expired";
             } else {
                 statusCell.textContent = "✅ ว่าง";
-                statusCell.className = "expired";
+                statusCell.className = "available";
             }
             row.appendChild(statusCell);
 
@@ -77,14 +77,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 actionCell.appendChild(cancelButton);
             } else if (currentTime < canBookFrom) {
                 let disabledButton = document.createElement("button");
-                disabledButton.textContent = "จอง";
+                disabledButton.textContent = "รอเปิดจอง";
                 disabledButton.className = "disabled-btn";
                 disabledButton.disabled = true;
                 actionCell.appendChild(disabledButton);
             } else if (currentTime >= timeSlotStart) {
                 let expiredButton = document.createElement("button");
-                expiredButton.textContent = "จอง";
-                expiredButton.className = "book-btn";
+                expiredButton.textContent = "หมดเวลา";
+                expiredButton.className = "disabled-btn";
                 expiredButton.disabled = true;
                 actionCell.appendChild(expiredButton);
             } else {
