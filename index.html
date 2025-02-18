@@ -16,6 +16,9 @@
 
     <h2>ระบบจองเวลาห้อง</h2>
     
+    <label for="date-picker">เลือกวันที่:</label>
+    <input type="date" id="date-picker">
+
     <div id="booking-rules"></div>
 
     <table>
@@ -30,8 +33,24 @@
         <tbody id="schedule"></tbody>
     </table>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function getFormattedDate(offset = 0) {
+                let date = new Date();
+                date.setDate(date.getDate() + offset);
+                return date.toISOString().split("T")[0];
+            }
+            
+            let datePicker = document.getElementById("date-picker");
+            if (datePicker) {
+                datePicker.min = getFormattedDate(0);
+                datePicker.max = getFormattedDate(365);
+                datePicker.value = getFormattedDate(0);
+            }
+        });
+    </script>
+    
     <script src="tas.js"></script>
-
     
     <footer class="footer">
         <div class="footer-content">
@@ -41,10 +60,5 @@
         </div>
     </footer>
     
-
-    <script src="tas.js"></script>
-
-</body>
-</html>
 </body>
 </html>
