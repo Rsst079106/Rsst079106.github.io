@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const times = [
         "08:10-09:10", "09:10-10:10", "10:10-11:10", "11:10-12:10",
         "12:10-13:10", "13:10-14:10", "14:10-15:10", "15:10-16:10",
-        "16:10-17:10", "17:10-18:10"
+        "16:10-17:10", "17:10-18:10", "18:10-19:10", "19:10-20:10"
     ];
 
     let bookings = JSON.parse(localStorage.getItem("bookings")) || {};
@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         scheduleTable.innerHTML = "";
         let currentDate = selectedDate;
         let availableCount = 0;
+        let bookedCount = 0;
 
         let dateHeader = document.createElement("tr");
         let dateCell = document.createElement("td");
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let booking = bookings[currentDate][time];
                 statusCell.textContent = `❌ ถูกจองโดย ${booking.name}`;
                 statusCell.className = "booked";
+                bookedCount++;
                 
                 let cancelButton = document.createElement("button");
                 cancelButton.textContent = "ยกเลิกจอง";
@@ -107,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
             scheduleTable.appendChild(row);
         });
 
-        let availableRow = document.createElement("tr");
-        let availableCell = document.createElement("td");
-        availableCell.colSpan = 4;
-        availableCell.textContent = `🟢 สถานะว่างทั้งหมด: ${availableCount} ช่วงเวลา`;
-        availableCell.className = "available-summary";
-        availableRow.appendChild(availableCell);
-        scheduleTable.appendChild(availableRow);
+        let summaryRow = document.createElement("tr");
+        let summaryCell = document.createElement("td");
+        summaryCell.colSpan = 4;
+        summaryCell.textContent = `🟢 ว่าง: ${availableCount} | ❌ จองแล้ว: ${bookedCount}`;
+        summaryCell.className = "summary";
+        summaryRow.appendChild(summaryCell);
+        scheduleTable.appendChild(summaryRow);
     }
 
     let datePicker = document.getElementById("date-picker");
