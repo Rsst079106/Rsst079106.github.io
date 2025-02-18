@@ -21,7 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function isStudentAlreadyBooked(studentId) {
-        return Object.values(bookings).some(booking => booking.studentId === studentId);
+        return Object.values(bookings).some(dayBookings =>
+            Object.values(dayBookings).some(booking => booking.studentId === studentId)
+        );
     }
 
     function updateSchedule() {
@@ -56,16 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.appendChild(timeCell);
 
                 let timeSlotStart = parseTimeToTimestamp(currentDate, time);
-                let canBookFrom = timeSlotStart - 3600000;
+
+                let statusCell = document.createElement("td");
+                let actionCell = document.createElement("td");
 
                 if (bookings[currentDate] && bookings[currentDate][time]) {
                     let booking = bookings[currentDate][time];
-                    let statusCell = document.createElement("td");
                     statusCell.textContent = `❌ ถูกจองโดย ${booking.name}`;
                     statusCell.className = "booked";
-                    row.appendChild(statusCell);
-
-                    let actionCell = document.createElement("td");
+                    
                     let cancelButton = document.createElement("button");
                     cancelButton.textContent = "ยกเลิกจอง";
                     cancelButton.className = "cancel-btn";
@@ -83,49 +84,39 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     };
                     actionCell.appendChild(cancelButton);
-                    row.appendChild(actionCell);
                 } else {
-                    let statusCell = document.createElement("td");
                     statusCell.textContent = "✅ ว่าง";
-                    statusCell.className = (currentTime >= timeSlotStart) ? "expired" : "available";
-                    row.appendChild(statusCell);
+                    statusCell.className = "available";
 
-                    let actionCell = document.createElement("td");
-                    if (currentTime >= timeSlotStart) {
-                        let expiredButton = document.createElement("button");
-                        expiredButton.textContent = "จอง";
-                        expiredButton.className = "disabled-btn";
-                        expiredButton.disabled = true;
-                        actionCell.appendChild(expiredButton);
-                    } else {
-                        let bookButton = document.createElement("button");
-                        bookButton.textContent = "จอง";
-                        bookButton.className = "book-btn";
-                        bookButton.onclick = function () {
-                            let userName = prompt("กรุณากรอกชื่อของคุณ:");
-                            let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษา:");
-                            if (userName && studentId) {
-                                if (isStudentAlreadyBooked(studentId)) {
-                                    alert("❌ คุณสามารถจองได้เพียง 1 รอบเท่านั้น!");
-                                    return;
-                                }
-                                if (!bookings[currentDate]) bookings[currentDate] = {};
-                                bookings[currentDate][time] = {
-                                    name: userName,
-                                    studentId: studentId
-                                };
-                                localStorage.setItem("bookings", JSON.stringify(bookings));
-                                updateSchedule();
+                    let bookButton = document.createElement("button");
+                    bookButton.textContent = "จอง";
+                    bookButton.className = "book-btn";
+                    bookButton.onclick = function () {
+                        let userName = prompt("กรุณากรอกชื่อของคุณ:");
+                        let studentId = prompt("กรุณากรอกเลขประจำตัวนักศึกษา:");
+                        if (userName && studentId) {
+                            if (isStudentAlreadyBooked(studentId)) {
+                                alert("❌ คุณสามารถจองได้เพียง 1 รอบเท่านั้น!");
+                                return;
                             }
-                        };
-                        actionCell.appendChild(bookButton);
-                    }
-                    row.appendChild(actionCell);
+                            if (!bookings[currentDate]) bookings[currentDate] = {};
+                            bookings[currentDate][time] = {
+                                name: userName,
+                                studentId: studentId
+                            };
+                            localStorage.setItem("bookings", JSON.stringify(bookings));
+                            updateSchedule();
+                        }
+                    };
+                    actionCell.appendChild(bookButton);
                 }
 
+                row.appendChild(statusCell);
+                row.appendChild(actionCell);
                 scheduleTable.appendChild(row);
             });
         });
     }
+
     updateSchedule();
 });
