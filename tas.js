@@ -13,13 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return date.toISOString().split("T")[0]; // YYYY-MM-DD
     }
 
-    function parseTimeToTimestamp(dateStr, timeStr) {
-        let date = new Date(dateStr);
-        let [startHour, startMinute] = timeStr.split("-")[0].split(":");
-        date.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
-        return date.getTime();
-    }
-
     function isStudentAlreadyBooked(studentId) {
         return Object.values(bookings).some(dayBookings =>
             Object.values(dayBookings).some(booking => booking.studentId === studentId)
@@ -36,10 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
         scheduleTable.innerHTML = "";
 
         // แสดง 7 วันถัดไป
-        Array.from({ length: 7 }, (_, i) => i).forEach(offset => {
+        for (let offset = 0; offset < 7; offset++) {
             let currentDate = getFormattedDate(offset);
             let availableCount = 0;
 
+            // เพิ่มหัวข้อวันที่
             let dateHeader = document.createElement("tr");
             let dateCell = document.createElement("td");
             dateCell.colSpan = 4;
@@ -117,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 scheduleTable.appendChild(row);
             });
 
+            // เพิ่มแถวแสดงจำนวนช่องว่างทั้งหมดของวันนั้น
             let availableRow = document.createElement("tr");
             let availableCell = document.createElement("td");
             availableCell.colSpan = 4;
@@ -124,8 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
             availableCell.className = "available-summary";
             availableRow.appendChild(availableCell);
             scheduleTable.appendChild(availableRow);
-        });
+        }
     }
 
     updateSchedule();
 });
+
