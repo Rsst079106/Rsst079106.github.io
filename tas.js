@@ -48,14 +48,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 statusCell.textContent = "❌ ถูกจองโดย " + bookings[time].name;
                 statusCell.className = "booked";
             } else if (currentTime < canBookFrom) {
-                statusCell.textContent = "⏳ รอเปิดให้จอง";
-                statusCell.className = "waiting";
+                statusCell.textContent = "✅ ว่าง";
+                statusCell.className = "expired";
             } else if (currentTime >= timeSlotStart) {
-                statusCell.textContent = "⏰ หมดเวลา";
+                statusCell.textContent = "✅ ว่าง";
                 statusCell.className = "expired";
             } else {
                 statusCell.textContent = "✅ ว่าง";
-                statusCell.className = "available";
+                statusCell.className = "expired";
             }
             row.appendChild(statusCell);
 
@@ -77,14 +77,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 actionCell.appendChild(cancelButton);
             } else if (currentTime < canBookFrom) {
                 let disabledButton = document.createElement("button");
-                disabledButton.textContent = "รอเปิดจอง";
+                disabledButton.textContent = "จอง";
                 disabledButton.className = "disabled-btn";
                 disabledButton.disabled = true;
                 actionCell.appendChild(disabledButton);
             } else if (currentTime >= timeSlotStart) {
                 let expiredButton = document.createElement("button");
-                expiredButton.textContent = "หมดเวลา";
-                expiredButton.className = "disabled-btn";
+                expiredButton.textContent = "จอง";
+                expiredButton.className = "book-btn";
                 expiredButton.disabled = true;
                 actionCell.appendChild(expiredButton);
             } else {
@@ -117,3 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     updateSchedule();
 });
+ส่งเมื่อ 1 ชั่วโมงที่แล้ว
+
+
